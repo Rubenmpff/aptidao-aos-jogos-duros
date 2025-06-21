@@ -8,15 +8,16 @@
 </head>
 <body>
   <div class="container">
-    <h1>🎲 Aptidão aos Jogos <span class="duros">DUROS</span></h1>
-
+    <h1>🎲 Aptidão aos Jogos DUROS</h1>
     <form id="quiz-form">
-      <label for="nome">Nome de guerra:</label><br>
-      <input type="text" id="nome" placeholder="Ex: Ruben, o Implacável" required /><br><br>
+      <label for="nome">Nome de guerra:</label>
+      <input type="text" id="nome" required />
+
+      <progress id="barra-progresso" value="0" max="40"></progress>
 
       <div id="perguntas"></div>
 
-      <button type="submit">💥 Ver Resultado</button>
+      <button type="submit" class="botao">🔥 Ver Resultado</button>
     </form>
 
     <div id="resultado" class="hidden"></div>
@@ -24,14 +25,25 @@
     <h2>🏆 Ranking dos Durões</h2>
     <ul id="ranking-list"></ul>
 
-    <a href="resultados.html" class="btn-ver-resultados">📊 Ver todos os resultados</a>
+    <p><a href="resultados.html">📊 Ver todos os resultados</a></p>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDKs compatíveis para HTML simples -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
   <script src="firebase-config.js"></script>
   <script src="script.js"></script>
+
+  <script>
+    document.getElementById("quiz-form").addEventListener("change", () => {
+      let respondidas = 0;
+      perguntas.forEach((_, i) => {
+        const valor = document.getElementById(`pergunta${i}`)?.value;
+        if (valor !== undefined && valor !== "") respondidas++;
+      });
+      document.getElementById("barra-progresso").value = respondidas;
+    });
+  </script>
 </body>
 </html>
