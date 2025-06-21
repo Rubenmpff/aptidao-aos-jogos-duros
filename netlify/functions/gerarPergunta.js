@@ -11,7 +11,10 @@ exports.handler = async function (event, context) {
       };
     }
 
-    const limparTexto = (str) => str.replace(/[\r\n]+/g, ' ').replace(/"/g, "'");
+    // Força str a ser string antes de usar .replace
+    const limparTexto = (str) =>
+      String(str).replace(/[\r\n]+/g, ' ').replace(/"/g, "'").trim();
+
     const respostasLimpa = respostas.map(limparTexto).join(" | ");
 
     const prompt = `
@@ -44,12 +47,16 @@ Regras:
     }
 
     const data = await response.json();
-    const gerado = data[0]?.generated_text || "";
-    const linha = gerado.split("\n").find(l => l.trim().toLowerCase().startsWith("pergunta:"));
+    const gerado = data?.[0]?.generated_text || "";
+    const linha = gerado.split("\n").find(l =>
+      l.trim().toLowerCase().startsWith("pergunta:")
+    );
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ texto: linha || "Ruben está sem criatividade agora..." })
+      body: JSON.stringify({
+        texto: linha ? linha.replace(/^pergunta:\s*/i, "") : "Ruben está sem criatividade agora..."
+      })
     };
 
   } catch (error) {
