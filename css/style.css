@@ -1,0 +1,108 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f3f3f3;
+  padding: 20px;
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+h1 .vermelho {
+  color: #c40000;
+  font-weight: bold;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+#barra-container {
+  background: #eee;
+  border-radius: 6px;
+  height: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+#barra-progresso {
+  background: #c40000;
+  height: 100%;
+  width: 0%;
+  transition: width 0.3s;
+}
+
+#pergunta-container {
+  margin-bottom: 15px;
+}
+
+#pergunta {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+h2 {
+  margin-top: 30px;
+  font-size: 20px;
+}
+
+#ranking {
+  list-style: none;
+  padding: 0;
+}
+
+#ranking li {
+  padding: 6px 0;
+  border-bottom: 1px solid #ddd;
+}
