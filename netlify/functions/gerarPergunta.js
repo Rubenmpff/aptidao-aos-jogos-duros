@@ -11,13 +11,16 @@ exports.handler = async function (event, context) {
       };
     }
 
+    const limparTexto = (str) => str.replace(/[\r\n]+/g, ' ').replace(/"/g, "'");
+    const respostasLimpa = respostas.map(limparTexto).join(" | ");
+
     const prompt = `
 Cria apenas uma pergunta engraçada e sarcástica sobre jogos de tabuleiro difíceis e decisões bêbadas.
 
 Regras:
 - A pergunta deve estar numa única linha e começar com: Pergunta:
 - Não escrevas nenhuma resposta.
-- Inspira-te nestas respostas anteriores: ${respostas.join(" | ")}.
+- Inspira-te nestas respostas anteriores: ${respostasLimpa}.
 - Não menciones IA, o autor é um amigo chamado Ruben.
 - Estilo: descontraído, criativo, divertido.
 `;
@@ -28,7 +31,10 @@ Regras:
         "Authorization": `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ inputs: prompt })
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: { max_new_tokens: 60, temperature: 0.8 }
+      })
     });
 
     if (!response.ok) {

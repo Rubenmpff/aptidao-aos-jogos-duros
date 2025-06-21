@@ -1,76 +1,105 @@
-import { gerarPerguntaComOpcoes } from "./ia.js";
-// import { saveToFirebase } from "./firebase-config.js";
+// js/app.js
+import { perguntasFechadas } from "./perguntasFechadas.js";
+import {
+  inicializarPerguntas,
+  obterPerguntaAtual,
+  avancarPergunta,
+  terminou,
+  total
+} from "./perguntasManager.js";
 
 const nomeInput = document.getElementById("nome");
 const pergunta = document.getElementById("pergunta");
+const selectOpcao = document.getElementById("opcao");
 const respostaInput = document.getElementById("resposta");
 const btnProxima = document.getElementById("btn-proxima");
 const barra = document.getElementById("barra-progresso");
 const rankingList = document.getElementById("ranking");
 
 let pontuacao = 0;
-let perguntaAtual = 0;
-const totalPerguntas = 5;
-const respostas = [];
+let respostasFechadas = [];
+let respostasAbertas = [];
 
 btnProxima.addEventListener("click", async () => {
   const nome = nomeInput.value.trim();
-  const resposta = respostaInput.value.trim();
-
   if (!nome) {
     alert("Diz lá o teu nome de guerra primeiro!");
     return;
   }
 
-  if (!resposta) {
-    alert("O Ruben está à espera da tua resposta...");
+  const perguntaAtual = obterPerguntaAtual();
+
+  if (perguntaAtual.tipo === "fechada") {
+    const resposta = selectOpcao.value;
+    if (!resposta || resposta === "-- Escolhe uma opção --") {
+      alert("O Ruben está à espera que escolhas uma opção.");
+      return;
+    }
+    respostasFechadas.push(resposta);
+  } else {
+    const resposta = respostaInput.value.trim();
+    if (!resposta) {
+      alert("O Ruben está à espera da tua resposta aberta!");
+      return;
+    }
+    respostasAbertas.push(resposta);
+  }
+
+  pontuacao++; // Podes trocar isto por avaliação personalizada depois
+  atualizarProgresso();
+
+  if (!avancarPergunta()) {
+    mostrarResultadoFinal(nome);
     return;
   }
 
-  pontuacao++; // Podes adaptar se quiseres avaliação real
-  perguntaAtual++;
-  respostas.push(resposta);
-  atualizarProgresso();
-
-  if (perguntaAtual < totalPerguntas) {
-    await mostrarPerguntaDoRuben();
-  } else {
-    mostrarRanking(nome, pontuacao);
-    // saveToFirebase(nome, pontuacao);
-  }
-
-  respostaInput.value = "";
+  mostrarNovaPergunta();
 });
 
 function atualizarProgresso() {
-  const progresso = (perguntaAtual / totalPerguntas) * 100;
+  const totalRespostas = respostasFechadas.length + respostasAbertas.length;
+  const progresso = (totalRespostas / total()) * 100;
   barra.style.width = `${progresso}%`;
 }
 
-async function mostrarPerguntaDoRuben() {
-  pergunta.textContent = "🧠 Ruben está a preparar a pergunta...";
-  
-  try {
-    const texto = await gerarPerguntaComOpcoes(respostas);
-    pergunta.textContent = texto.replace(/^Pergunta:\s*/i, "").trim();
-  } catch (error) {
-    console.error("Erro a mostrar pergunta:", error);
-    pergunta.textContent = "Erro: Ruben foi beber café.";
+function mostrarNovaPergunta() {
+  const p = obterPerguntaAtual();
+
+  if (p.tipo === "fechada") {
+    respostaInput.style.display = "none";
+    selectOpcao.style.display = "block";
+
+    pergunta.classList.remove("pergunta-ia");
+    pergunta.textContent = `🧠 Ruben pergunta: ${p.pergunta}`;
+
+    selectOpcao.innerHTML = `<option disabled selected>-- Escolhe uma opção --</option>`;
+    p.opcoes.forEach((op, i) => {
+      const opt = document.createElement("option");
+      opt.value = String.fromCharCode(97 + i); // 'a', 'b', 'c', ...
+      opt.textContent = op;
+      selectOpcao.appendChild(opt);
+    });
+  } else {
+    selectOpcao.style.display = "none";
+    respostaInput.style.display = "block";
+
+    pergunta.classList.add("pergunta-ia");
+    pergunta.textContent = `🧠 Ruben quer saber: ${p.pergunta}`;
+    respostaInput.value = "";
   }
 }
 
-function mostrarRanking(nome, pontos) {
+function mostrarResultadoFinal(nome) {
   pergunta.textContent = `🔥 Muito bem, ${nome}! Terminaste o desafio do Ruben!`;
-  respostaInput.style.display = "none";
   btnProxima.style.display = "none";
+  respostaInput.style.display = "none";
+  selectOpcao.style.display = "none";
 
-  const jogador = { nome, pontos };
+  const jogador = { nome, pontos: pontuacao };
   let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
-
   ranking.push(jogador);
   ranking.sort((a, b) => b.pontos - a.pontos);
   ranking = ranking.slice(0, 5);
-
   localStorage.setItem("ranking", JSON.stringify(ranking));
 
   rankingList.innerHTML = ranking
@@ -78,6 +107,7 @@ function mostrarRanking(nome, pontos) {
     .join("");
 }
 
-window.addEventListener("load", () => {
-  mostrarPerguntaDoRuben();
+window.addEventListener("load", async () => {
+  await inicializarPerguntas(respostasFechadas);
+  mostrarNovaPergunta();
 });

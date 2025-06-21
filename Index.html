@@ -18,11 +18,15 @@
     </div>
 
     <div id="pergunta-container">
-      <p id="pergunta">O que fazes quando o jogo dura mais de 4 horas?</p>
+      <p id="pergunta">Ruben está a preparar o desafio...</p>
 
-      <!-- ⛔️ Removido select -->
-      <!-- ✅ Substituído por textarea para respostas livres -->
-      <textarea id="resposta" placeholder="Escreve a tua resposta..." rows="3"></textarea>
+      <!-- ✅ SELECT (para perguntas com opções) -->
+      <select id="opcao" style="display: none;">
+        <option disabled selected>-- Escolhe uma opção --</option>
+      </select>
+
+      <!-- ✅ TEXTAREA (para perguntas abertas / IA) -->
+      <textarea id="resposta" placeholder="Escreve a tua resposta..." rows="3" style="display: none;"></textarea>
     </div>
 
     <button id="btn-proxima">➡️ Próxima</button>
@@ -31,11 +35,11 @@
     <ul id="ranking"></ul>
   </div>
 
-  <!-- Firebase SDK versão 8 (compatível com firebase-config.js) -->
+  <!-- Firebase SDK versão 8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <!-- Scripts do projeto -->
+  <!-- Scripts -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

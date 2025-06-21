@@ -10,14 +10,20 @@ export async function gerarPerguntaComOpcoes(respostas) {
 
     if (!response.ok) {
       console.error("❌ Erro da função serverless:", response.status);
-      return "Ruben ficou sem ideias...";
+      return "Ruben foi buscar mais minis... tenta outra vez.";
     }
 
     const data = await response.json();
-    return data.texto || "Ruben ficou sem ideias...";
-    
+
+    if (!data.texto || !data.texto.toLowerCase().startsWith("pergunta:")) {
+      console.warn("⚠️ Resposta inesperada da IA:", data);
+      return "Ruben está a recuperar da última jogatana...";
+    }
+
+    return data.texto;
+
   } catch (error) {
     console.error("🔥 Erro ao comunicar com Ruben:", error);
-    return "Ruben ficou sem ideias...";
+    return "Erro técnico! Ruben entornou o tabuleiro...";
   }
 }
