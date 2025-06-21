@@ -1,5 +1,4 @@
 // js/perguntasManager.js
-import { perguntasFechadas } from "./perguntasFechadas.js";
 import { gerarPerguntaComOpcoes } from "./ia.js";
 
 const TOTAL_PERGUNTAS_IA = 10;
@@ -8,20 +7,24 @@ let perguntasIA = [];
 let perguntasCompletas = [];
 let indiceAtual = 0;
 
-export async function inicializarPerguntas(respostasFechadas) {
-  // Gera 10 perguntas IA com base nas respostas fechadas
+export async function inicializarPerguntas(perguntasFechadas) {
   perguntasIA = [];
 
   for (let i = 0; i < TOTAL_PERGUNTAS_IA; i++) {
-    const perguntaTexto = await gerarPerguntaComOpcoes(respostasFechadas);
+    const perguntaTexto = await gerarPerguntaComOpcoes(perguntasFechadas);
     perguntasIA.push({
       tipo: "ia",
       pergunta: perguntaTexto,
     });
   }
 
-  // Junta todas: primeiro as fechadas, depois as IA
-  perguntasCompletas = perguntasFechadas.map(p => ({ tipo: "fechada", ...p })).concat(perguntasIA);
+  // Misturar as perguntas fechadas antes de combinar (opcional)
+  const perguntasFechadasAleatorias = shuffle(perguntasFechadas).map(p => ({
+    tipo: "fechada",
+    ...p,
+  }));
+
+  perguntasCompletas = [...perguntasFechadasAleatorias, ...perguntasIA];
   indiceAtual = 0;
 }
 
@@ -40,4 +43,14 @@ export function terminou() {
 
 export function total() {
   return perguntasCompletas.length;
+}
+
+// Utilitário para baralhar perguntas fechadas (opcional, mas divertido)
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }

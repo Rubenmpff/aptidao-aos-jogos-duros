@@ -1,12 +1,12 @@
 // js/app.js
-import { perguntasFechadas } from "./perguntasFechadas.js";
+import { perguntasFechadas } from "./perguntasPredefinidas.js";
 import {
   inicializarPerguntas,
   obterPerguntaAtual,
   avancarPergunta,
-  terminou,
   total
 } from "./perguntasManager.js";
+import { avaliarJogador } from "./avaliador.js";
 
 const nomeInput = document.getElementById("nome");
 const pergunta = document.getElementById("pergunta");
@@ -45,7 +45,7 @@ btnProxima.addEventListener("click", async () => {
     respostasAbertas.push(resposta);
   }
 
-  pontuacao++; // Podes trocar isto por avaliação personalizada depois
+  pontuacao++; // Podes trocar por uma lógica mais sofisticada depois
   atualizarProgresso();
 
   if (!avancarPergunta()) {
@@ -57,8 +57,8 @@ btnProxima.addEventListener("click", async () => {
 });
 
 function atualizarProgresso() {
-  const totalRespostas = respostasFechadas.length + respostasAbertas.length;
-  const progresso = (totalRespostas / total()) * 100;
+  const totalRespondidas = respostasFechadas.length + respostasAbertas.length;
+  const progresso = (totalRespondidas / total()) * 100;
   barra.style.width = `${progresso}%`;
 }
 
@@ -68,21 +68,19 @@ function mostrarNovaPergunta() {
   if (p.tipo === "fechada") {
     respostaInput.style.display = "none";
     selectOpcao.style.display = "block";
-
     pergunta.classList.remove("pergunta-ia");
     pergunta.textContent = `🧠 Ruben pergunta: ${p.pergunta}`;
 
     selectOpcao.innerHTML = `<option disabled selected>-- Escolhe uma opção --</option>`;
     p.opcoes.forEach((op, i) => {
       const opt = document.createElement("option");
-      opt.value = String.fromCharCode(97 + i); // 'a', 'b', 'c', ...
+      opt.value = String.fromCharCode(97 + i); // 'a', 'b', ...
       opt.textContent = op;
       selectOpcao.appendChild(opt);
     });
   } else {
     selectOpcao.style.display = "none";
     respostaInput.style.display = "block";
-
     pergunta.classList.add("pergunta-ia");
     pergunta.textContent = `🧠 Ruben quer saber: ${p.pergunta}`;
     respostaInput.value = "";
@@ -95,6 +93,15 @@ function mostrarResultadoFinal(nome) {
   respostaInput.style.display = "none";
   selectOpcao.style.display = "none";
 
+  // Avaliação final
+  const avaliacao = avaliarJogador(respostasFechadas, respostasAbertas);
+  const resultadoFinal = document.createElement("p");
+  resultadoFinal.textContent = `💬 Avaliação: ${avaliacao}`;
+  resultadoFinal.style.marginTop = "20px";
+  resultadoFinal.style.fontWeight = "bold";
+  pergunta.parentElement.appendChild(resultadoFinal);
+
+  // Ranking
   const jogador = { nome, pontos: pontuacao };
   let ranking = JSON.parse(localStorage.getItem("ranking")) || [];
   ranking.push(jogador);
@@ -108,6 +115,6 @@ function mostrarResultadoFinal(nome) {
 }
 
 window.addEventListener("load", async () => {
-  await inicializarPerguntas(respostasFechadas);
+  await inicializarPerguntas(perguntasFechadas); // Corrigido aqui
   mostrarNovaPergunta();
 });
