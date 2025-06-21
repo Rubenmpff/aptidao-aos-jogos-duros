@@ -6,7 +6,7 @@ const perguntas = [
   {
     pergunta: "O que fazes quando o jogo dura mais de 4 horas?",
     opcoes: [
-      "Fugo sem dizer nada",
+      "Fujo sem dizer nada",
       "Ligo a dizer que estou bem",
       "Trago snacks e mantas",
       "Aceito o destino e jogo mais"
