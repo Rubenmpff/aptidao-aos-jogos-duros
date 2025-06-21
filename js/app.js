@@ -1,10 +1,9 @@
-// Importar corretamente a função da IA (agora exportada)
 import { gerarPerguntaComOpcoes } from "./ia.js";
-// import { saveToFirebase } from "./firebase-config.js"; // Ativa se fores usar Firebase
+// import { saveToFirebase } from "./firebase-config.js";
 
 const nomeInput = document.getElementById("nome");
 const pergunta = document.getElementById("pergunta");
-const selectOpcao = document.getElementById("opcao");
+const respostaInput = document.getElementById("resposta");
 const btnProxima = document.getElementById("btn-proxima");
 const barra = document.getElementById("barra-progresso");
 const rankingList = document.getElementById("ranking");
@@ -16,19 +15,19 @@ const respostas = [];
 
 btnProxima.addEventListener("click", async () => {
   const nome = nomeInput.value.trim();
-  const resposta = selectOpcao.value;
+  const resposta = respostaInput.value.trim();
 
   if (!nome) {
     alert("Diz lá o teu nome de guerra primeiro!");
     return;
   }
 
-  if (!resposta || resposta === "-- Escolhe uma opção --") {
-    alert("O Ruben está à espera que escolhas uma opção.");
+  if (!resposta) {
+    alert("O Ruben está à espera da tua resposta...");
     return;
   }
 
-  pontuacao++;
+  pontuacao++; // Podes adaptar se quiseres avaliação real
   perguntaAtual++;
   respostas.push(resposta);
   atualizarProgresso();
@@ -37,10 +36,10 @@ btnProxima.addEventListener("click", async () => {
     await mostrarPerguntaDoRuben();
   } else {
     mostrarRanking(nome, pontuacao);
-    // saveToFirebase(nome, pontuacao); // Ativa se quiseres guardar online
+    // saveToFirebase(nome, pontuacao);
   }
 
-  selectOpcao.selectedIndex = 0;
+  respostaInput.value = "";
 });
 
 function atualizarProgresso() {
@@ -49,34 +48,20 @@ function atualizarProgresso() {
 }
 
 async function mostrarPerguntaDoRuben() {
-  pergunta.textContent = "Ruben está a pensar na próxima pergunta...";
-  selectOpcao.innerHTML = `<option disabled selected>Carregando opções...</option>`;
-
-  const texto = await gerarPerguntaComOpcoes(respostas);
-  const linhas = texto.split("\n").filter(l => l.trim() !== "");
-
-  const perguntaTexto = linhas.find(l => l.toLowerCase().startsWith("pergunta"));
-  const opcoes = linhas.filter(l => /^[a-d]\)/i.test(l.trim()));
-
-  if (!perguntaTexto || opcoes.length < 4) {
-    pergunta.textContent = "Ruben ficou sem ideias... tenta outra vez.";
-    return;
+  pergunta.textContent = "🧠 Ruben está a preparar a pergunta...";
+  
+  try {
+    const texto = await gerarPerguntaComOpcoes(respostas);
+    pergunta.textContent = texto.replace(/^Pergunta:\s*/i, "").trim();
+  } catch (error) {
+    console.error("Erro a mostrar pergunta:", error);
+    pergunta.textContent = "Erro: Ruben foi beber café.";
   }
-
-  pergunta.textContent = `🧠 Ruben pergunta: ${perguntaTexto.replace("Pergunta:", "").trim()}`;
-
-  selectOpcao.innerHTML = `<option disabled selected>-- Escolhe uma opção --</option>`;
-  opcoes.forEach((op, i) => {
-    const option = document.createElement("option");
-    option.value = String.fromCharCode(97 + i); // 'a', 'b', 'c', 'd'
-    option.textContent = op.slice(3).trim(); // remove "a) ", "b) ", etc.
-    selectOpcao.appendChild(option);
-  });
 }
 
 function mostrarRanking(nome, pontos) {
   pergunta.textContent = `🔥 Muito bem, ${nome}! Terminaste o desafio do Ruben!`;
-  selectOpcao.style.display = "none";
+  respostaInput.style.display = "none";
   btnProxima.style.display = "none";
 
   const jogador = { nome, pontos };

@@ -106,3 +106,14 @@ h2 {
   padding: 6px 0;
   border-bottom: 1px solid #ddd;
 }
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: vertical;
+  box-sizing: border-box;
+}

@@ -9,14 +9,15 @@ export async function gerarPerguntaComOpcoes(respostas) {
     });
 
     if (!response.ok) {
-      throw new Error(`Erro HTTP: ${response.status}`);
+      console.error("❌ Erro da função serverless:", response.status);
+      return "Ruben ficou sem ideias...";
     }
 
     const data = await response.json();
     return data.texto || "Ruben ficou sem ideias...";
-
+    
   } catch (error) {
-    console.error("Erro ao gerar pergunta:", error);
-    return "Ruben tropeçou no dado... tenta outra vez!";
+    console.error("🔥 Erro ao comunicar com Ruben:", error);
+    return "Ruben ficou sem ideias...";
   }
 }

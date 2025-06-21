@@ -4,8 +4,7 @@ exports.handler = async function (event, context) {
   try {
     const { respostas } = JSON.parse(event.body || '{}');
 
-    if (!respostas || !Array.isArray(respostas)) {
-      console.warn("⚠️ Nenhuma ou formato inválido de respostas:", respostas);
+    if (!Array.isArray(respostas) || respostas.length === 0) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Respostas inválidas fornecidas." })
@@ -13,22 +12,14 @@ exports.handler = async function (event, context) {
     }
 
     const prompt = `
-Gera uma pergunta engraçada e sarcástica sobre jogos de tabuleiro difíceis e decisões bêbadas.
+Cria apenas uma pergunta engraçada e sarcástica sobre jogos de tabuleiro difíceis e decisões bêbadas.
 
-Formato obrigatório:
-Pergunta: [texto da pergunta]
-a) [opção A]
-b) [opção B]
-c) [opção C]
-d) [opção D]
-
-⚠️ Regras:
-- A pergunta deve começar com "Pergunta:".
-- Cada opção deve começar com "a)", "b)", etc.
-- Não incluas nada fora deste formato.
-- Inspira-te nestas respostas: ${respostas.join(" | ")}.
-- O autor é o Ruben, não menciones IA.
-- Estilo: informal, criativo, divertido.
+Regras:
+- A pergunta deve estar numa única linha e começar com: Pergunta:
+- Não escrevas nenhuma resposta.
+- Inspira-te nestas respostas anteriores: ${respostas.join(" | ")}.
+- Não menciones IA, o autor é um amigo chamado Ruben.
+- Estilo: descontraído, criativo, divertido.
 `;
 
     const response = await fetch("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", {
@@ -43,17 +34,16 @@ d) [opção D]
     if (!response.ok) {
       const errorText = await response.text();
       console.error("❌ Erro da API HuggingFace:", errorText);
-      throw new Error(`Erro na API do Hugging Face: ${response.status} ${errorText}`);
+      throw new Error(`Erro na API: ${response.status} ${errorText}`);
     }
 
     const data = await response.json();
-    const textoGerado = data[0]?.generated_text;
-
-    console.log("📤 Texto gerado pelo modelo:", textoGerado);
+    const gerado = data[0]?.generated_text || "";
+    const linha = gerado.split("\n").find(l => l.trim().toLowerCase().startsWith("pergunta:"));
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ texto: textoGerado || "Erro: Ruben ficou sem ideias." })
+      body: JSON.stringify({ texto: linha || "Ruben está sem criatividade agora..." })
     };
 
   } catch (error) {
