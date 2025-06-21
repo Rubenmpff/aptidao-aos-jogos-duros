@@ -1,6 +1,3 @@
-// firebase-config.js
-
-// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDkVtBh1_K9EyK6m01l4N_WaguwMV-1840",
   authDomain: "aptidao-aos-jogos-duros.firebaseapp.com",
@@ -11,31 +8,15 @@ const firebaseConfig = {
   measurementId: "G-9L5TLDVY8J"
 };
 
-// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
-
-// Inicializar Firestore
 const db = firebase.firestore();
 
-/**
- * Guarda ou atualiza a pontuação de um jogador no Firestore.
- * Substitui o documento se o nome já existir.
- */
 function saveToFirebase(nome, pontuacao) {
-  if (!nome || typeof pontuacao !== "number") {
-    console.warn("Dados inválidos para guardar no Firebase:", nome, pontuacao);
-    return;
-  }
-
-  const docRef = db.collection("respostas").doc(nome);
-
-  docRef.set({
-    nome,
-    pontuacao,
+  db.collection("respostas").add({
+    nome: nome,
+    pontuacao: pontuacao,
     timestamp: new Date()
-  }, { merge: true })
-    .then(() => console.log("✅ Resposta guardada com sucesso:", nome))
-    .catch((error) => console.error("❌ Erro ao guardar resposta no Firestore:", error));
+  })
+  .then(() => console.log("✅ Resposta salva no Firestore"))
+  .catch((error) => console.error("❌ Erro ao salvar:", error));
 }
-
-export { db, saveToFirebase };

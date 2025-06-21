@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resultados dos Jogos DUROS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Resultados dos Jogadores</h1>
+    <ul id="lista-resultados"></ul>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    const lista = document.getElementById("lista-resultados");
+
+    db.collection("respostas")
+      .orderBy("timestamp", "desc")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const dados = doc.data();
+          const item = document.createElement("li");
+          const data = new Date(dados.timestamp.toDate()).toLocaleString("pt-PT");
+
+          item.innerHTML = `<strong>${dados.nome}</strong> – ${dados.pontuacao} pts <small>(${data})</small>`;
+          lista.appendChild(item);
+        });
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar dados:", err);
+      });
+  </script>
+</body>
+</html>
