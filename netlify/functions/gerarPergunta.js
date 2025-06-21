@@ -47,17 +47,27 @@ Regras:
     }
 
     const data = await response.json();
-    const gerado = data?.[0]?.generated_text || "";
-    const linha = gerado.split("\n").find(l =>
-      l.trim().toLowerCase().startsWith("pergunta:")
-    );
+    const gerado = data[0]?.generated_text || "";
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        texto: linha ? linha.replace(/^pergunta:\s*/i, "") : "Ruben está sem criatividade agora..."
-      })
-    };
+// Tenta encontrar uma linha que comece com "Pergunta:"
+let linha = gerado.split("\n").find(l => l.trim().toLowerCase().startsWith("pergunta:"));
+
+// Se não encontrar, tenta extrair a primeira frase com ponto final
+if (!linha) {
+  const primeiraFrase = gerado.split(".")[0];
+  linha = `Pergunta: ${primeiraFrase.trim()}`;
+}
+
+// Se ainda assim for vazio, usa fallback
+if (!linha || linha.length < 10) {
+  linha = "Pergunta: Como defines ‘diversão’ depois de 3 copos e 4 horas de jogo?";
+}
+
+return {
+  statusCode: 200,
+  body: JSON.stringify({ texto: linha })
+};
+
 
   } catch (error) {
     console.error("🔥 Erro na função gerarPergunta:", error);
