@@ -1,6 +1,6 @@
+// Importar corretamente a função da IA (agora exportada)
 import { gerarPerguntaComOpcoes } from "./ia.js";
-// Se quiseres salvar no Firestore futuramente:
-// import { saveToFirebase } from "./firebase-config.js";
+// import { saveToFirebase } from "./firebase-config.js"; // Ativa se fores usar Firebase
 
 const nomeInput = document.getElementById("nome");
 const pergunta = document.getElementById("pergunta");
@@ -37,7 +37,7 @@ btnProxima.addEventListener("click", async () => {
     await mostrarPerguntaDoRuben();
   } else {
     mostrarRanking(nome, pontuacao);
-    // Optional: saveToFirebase(nome, pontuacao);
+    // saveToFirebase(nome, pontuacao); // Ativa se quiseres guardar online
   }
 
   selectOpcao.selectedIndex = 0;
@@ -93,7 +93,6 @@ function mostrarRanking(nome, pontos) {
     .join("");
 }
 
-// Iniciar primeira pergunta quando a página carregar
 window.addEventListener("load", () => {
   mostrarPerguntaDoRuben();
 });
