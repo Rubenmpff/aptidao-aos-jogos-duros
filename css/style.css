@@ -157,3 +157,50 @@ a:hover {
   font-size: 1.5em;
   font-weight: bold;
 }
+
+/* Responsivo para ecrãs pequenos (telemóveis) */
+@media (max-width: 600px) {
+  body {
+    padding: 1em;
+  }
+
+  .container {
+    padding: 1.5em;
+    border-width: 3px;
+    margin-bottom: 2em;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  label {
+    font-size: 1em;
+    margin-top: 1em;
+  }
+
+  input[type="text"],
+  select {
+    font-size: 0.95em;
+    padding: 0.8em;
+  }
+
+  button.botao {
+    font-size: 0.95em;
+    padding: 0.9em;
+  }
+
+  #ranking-list li {
+    font-size: 0.9em;
+    padding: 0.5em 0.8em;
+  }
+
+  .ranking h2 {
+    font-size: 1.3em;
+  }
+
+  #resultado {
+    font-size: 0.95em;
+    padding: 1em;
+  }
+}
