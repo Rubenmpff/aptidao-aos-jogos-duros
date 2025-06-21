@@ -4,46 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aptidão aos Jogos DUROS</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>🎲 Aptidão aos Jogos DUROS</h1>
+    <header>
+      <h1>🎲 Aptidão aos Jogos <span class="destaque">DUROS</span></h1>
+    </header>
+
     <form id="quiz-form">
-      <label for="nome">Nome de guerra:</label>
-      <input type="text" id="nome" required />
+      <fieldset>
+        <label for="nome">Nome de guerra:</label>
+        <input type="text" id="nome" placeholder="Ex: Ruben, O MAIOR!" required />
+      </fieldset>
 
       <progress id="barra-progresso" value="0" max="40"></progress>
 
-      <div id="perguntas"></div>
+      <div id="pergunta-container" class="pergunta-bloco"></div>
 
-      <button type="submit" class="botao">🔥 Ver Resultado</button>
+      <div style="text-align: center; margin-top: 1em;">
+        <button type="button" id="btn-proximo" class="botao">➡️ Próxima</button>
+        <button type="submit" id="btn-finalizar" class="botao hidden">🔥 Ver Resultado</button>
+      </div>
     </form>
 
-    <div id="resultado" class="hidden"></div>
+    <section id="resultado" class="hidden"></section>
 
-    <h2>🏆 Ranking dos Durões</h2>
-    <ul id="ranking-list"></ul>
-
-    <p><a href="resultados.html">📊 Ver todos os resultados</a></p>
+    <section class="ranking">
+      <h2>🏆 Ranking dos Durões</h2>
+      <ul id="ranking-list"></ul>
+      <p style="text-align:center;"><a href="resultados.html">📊 Ver todos os resultados</a></p>
+    </section>
   </div>
 
-  <!-- Firebase SDKs compatíveis para HTML simples -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-  <script src="firebase-config.js"></script>
-  <script src="script.js"></script>
-
-  <script>
-    document.getElementById("quiz-form").addEventListener("change", () => {
-      let respondidas = 0;
-      perguntas.forEach((_, i) => {
-        const valor = document.getElementById(`pergunta${i}`)?.value;
-        if (valor !== undefined && valor !== "") respondidas++;
-      });
-      document.getElementById("barra-progresso").value = respondidas;
-    });
-  </script>
+  <!-- App Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>

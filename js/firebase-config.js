@@ -8,14 +8,16 @@ const firebaseConfig = {
   measurementId: "G-9L5TLDVY8J"
 };
 
+// Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// Guarda ou substitui pontuação com timestamp correto
 function saveToFirebase(nome, pontuacao) {
-  db.collection("respostas").add({
+  db.collection("respostas").doc(nome).set({
     nome: nome,
     pontuacao: pontuacao,
-    timestamp: new Date()
+    timestamp: firebase.firestore.Timestamp.now()
   })
   .then(() => console.log("✅ Resposta salva no Firestore"))
   .catch((error) => console.error("❌ Erro ao salvar:", error));

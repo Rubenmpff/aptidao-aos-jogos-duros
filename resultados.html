@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Resultados dos Jogos DUROS</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="container">
@@ -15,7 +15,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script src="js/firebase-config.js"></script>
 
   <script>
     const lista = document.getElementById("lista-resultados");
@@ -24,10 +24,18 @@
       .orderBy("timestamp", "desc")
       .get()
       .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+          lista.innerHTML = "<li>❌ Nenhum resultado encontrado.</li>";
+          return;
+        }
+
         querySnapshot.forEach((doc) => {
           const dados = doc.data();
           const item = document.createElement("li");
-          const data = new Date(dados.timestamp.toDate()).toLocaleString("pt-PT");
+
+          const data = dados.timestamp?.toDate 
+            ? new Date(dados.timestamp.toDate()).toLocaleString("pt-PT")
+            : "⏱️ Sem data";
 
           item.innerHTML = `<strong>${dados.nome}</strong> – ${dados.pontuacao} pts <small>(${data})</small>`;
           lista.appendChild(item);
@@ -35,6 +43,7 @@
       })
       .catch((err) => {
         console.error("Erro ao buscar dados:", err);
+        lista.innerHTML = "<li>⚠️ Erro ao carregar resultados.</li>";
       });
   </script>
 </body>

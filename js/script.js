@@ -1,7 +1,8 @@
 // script.js - Gera perguntas, calcula pontuação, mostra resultado e ranking
 
 const perguntas = [
-  // 20 perguntas aqui (omiti para poupar espaço neste exemplo, mas já as tens completas)
+  // (perguntas como já listaste acima... mantemos o conteúdo existente)
+  // Certifica-te que cada pergunta tem estrutura correta: { pergunta: "...", opcoes: ["opção1", ...] }
   {
     pergunta: "O que fazes quando o jogo dura mais de 4 horas?",
     opcoes: [
@@ -181,7 +182,7 @@ const perguntas = [
       "Meio torto",
       "Quando nem sei quem sou"
     ]
-  }
+  },
   {
   pergunta: "Quantos copos precisas para achar que sabes todas as regras?",
   opcoes: [
@@ -362,62 +363,103 @@ const perguntas = [
     "Sugiro mais um"
   ]
 }
-
 ];
 
-function renderPerguntas() {
-  const container = document.getElementById("perguntas");
-  perguntas.forEach((pergunta, index) => {
-    const label = document.createElement("label");
-    label.textContent = pergunta.texto;
+let perguntaAtual = 0;
+let respostasSelecionadas = [];
 
-    const select = document.createElement("select");
-    select.id = `pergunta${index}`;
+function mostrarPergunta(index) {
+  const container = document.getElementById("pergunta-container");
+  container.innerHTML = "";
 
-    pergunta.opcoes.forEach(opcao => {
-      const option = document.createElement("option");
-      option.value = opcao.valor;
-      option.textContent = opcao.texto;
-      select.appendChild(option);
-    });
+  const perguntaObj = perguntas[index];
 
-    container.appendChild(label);
-    container.appendChild(document.createElement("br"));
-    container.appendChild(select);
-    container.appendChild(document.createElement("br"));
-    container.appendChild(document.createElement("br"));
+  const label = document.createElement("label");
+  label.htmlFor = `pergunta${index}`;
+  label.textContent = `🎯 ${perguntaObj.pergunta}`;
+
+  const select = document.createElement("select");
+  select.id = `pergunta${index}`;
+  select.required = true;
+
+  const defaultOption = document.createElement("option");
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  defaultOption.value = "";
+  defaultOption.textContent = "Escolhe uma opção...";
+  select.appendChild(defaultOption);
+
+  perguntaObj.opcoes.forEach((opcao, idx) => {
+    const option = document.createElement("option");
+    option.value = idx;
+    option.textContent = opcao;
+    select.appendChild(option);
   });
+
+  container.appendChild(label);
+  container.appendChild(select);
 }
 
-renderPerguntas();
+function atualizarProgresso() {
+  const barra = document.getElementById("barra-progresso");
+  barra.value = perguntaAtual;
+  barra.max = perguntas.length;
+}
 
-// Submissão do formulário
-document.getElementById("quiz-form").addEventListener("submit", function(e) {
+document.getElementById("btn-proximo").addEventListener("click", () => {
+  const nome = document.getElementById("nome").value.trim();
+  if (!nome) {
+    alert("Por favor, preenche o teu Nome de guerra antes de começares.");
+    document.getElementById("nome").focus();
+    return;
+  }
+
+  const select = document.querySelector("select");
+  if (!select || select.value === "") {
+    alert("Escolhe uma opção antes de continuar.");
+    return;
+  }
+
+  if (perguntaAtual === 0) {
+    document.getElementById("nome").parentElement.style.display = "none";
+  }
+
+  respostasSelecionadas.push(parseInt(select.value));
+  perguntaAtual++;
+
+  if (perguntaAtual < perguntas.length) {
+    mostrarPergunta(perguntaAtual);
+    atualizarProgresso();
+  } else {
+    document.getElementById("btn-proximo").classList.add("hidden");
+    document.getElementById("btn-finalizar").classList.remove("hidden");
+    atualizarProgresso();
+  }
+});
+
+document.getElementById("quiz-form").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const nome = document.getElementById("nome").value.trim();
   if (nome === "") return;
 
-  let total = 0;
-  perguntas.forEach((_, index) => {
-    total += parseInt(document.getElementById(`pergunta${index}`).value);
-  });
+  const total = respostasSelecionadas.reduce((acc, val) => acc + val, 0);
 
   let resultadoTexto = "";
   let selo = "";
 
   if (total <= 20) {
-    resultadoTexto = "🐣 Jogador Piu-Piu – Ainda pergunta 'de quem é a vez?'.";
-    selo = "❌ Não está apto a sofrer com jogos DUROS. Vai treinando com Dobble.";
+    resultadoTexto = "🐣 Jogador Piu-Piu";
+    selo = "❌ Não está apto a sofrer com jogos DUROS.";
   } else if (total <= 35) {
-    resultadoTexto = "🍷 Jogador Casual – Gosta da vibe, mas ainda se perde nas regras.";
-    selo = "⚠️ Semi-apto. Pode participar, mas sob supervisão e com snacks.";
+    resultadoTexto = "🍷 Jogador Casual";
+    selo = "⚠️ Semi-apto.";
   } else if (total <= 50) {
-    resultadoTexto = "🍺 Jogador de Elite Etílico – Bebe, joga, vence, repete.";
-    selo = "✅ Apto. Podes entrar no ringue e disputar a glória dos cubinhos.";
+    resultadoTexto = "🍺 Jogador de Elite Etílico";
+    selo = "✅ Apto.";
   } else {
-    resultadoTexto = "🧠 Lendário – Já explicou regras de um jogo que nunca jogou e ganhou.";
-    selo = "🏅 ALTAMENTE APTO. Considera ensinar jogos aos outros com ar superior.";
+    resultadoTexto = "🧠 Lendário";
+    selo = "🏅 ALTAMENTE APTO.";
   }
 
   document.getElementById("resultado").innerHTML = `
@@ -431,7 +473,6 @@ document.getElementById("quiz-form").addEventListener("submit", function(e) {
   carregarRanking();
 });
 
-// Ranking com medalhas e separador de aptos/não aptos
 function carregarRanking() {
   db.collection("respostas")
     .orderBy("pontuacao", "desc")
@@ -473,3 +514,19 @@ function carregarRanking() {
       console.error("Erro ao carregar ranking:", error);
     });
 }
+
+function saveToFirebase(nome, pontuacao) {
+  const dbRef = db.collection("respostas").doc(nome);
+
+  dbRef.set({ nome, pontuacao, timestamp: new Date() })
+    .then(() => {
+      console.log("✅ Pontuação salva com sucesso.");
+    })
+    .catch((error) => {
+      console.error("Erro ao salvar pontuação:", error);
+    });
+}
+
+// Inicializar
+mostrarPergunta(perguntaAtual);
+atualizarProgresso();

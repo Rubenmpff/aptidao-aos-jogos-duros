@@ -1,107 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap');
+
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(to right, #fefefe, #f4f4f4);
-  color: #222;
+  font-family: 'Rubik', sans-serif;
+  background: #f4f2ee url('https://www.transparenttextures.com/patterns/wood-pattern.png');
   margin: 0;
   padding: 2em;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .container {
-  max-width: 800px;
-  margin: auto;
-  background: white;
+  background: #fff8f0;
+  border-radius: 20px;
   padding: 2.5em;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  width: 100%;
+  border: 4px solid #5a3825;
+  position: relative;
 }
 
 h1 {
-  font-size: 2rem;
+  text-align: center;
+  font-size: 2.4em;
   margin-bottom: 1em;
+  color: #2e2e2e;
+  font-weight: 900;
+}
+
+h1 span.destaque {
+  color: #d90429;
+  text-shadow: 2px 2px #fff3e6;
 }
 
 label {
-  font-weight: bold;
   display: block;
-  margin-top: 1em;
+  margin: 1.5em 0 0.4em;
+  font-weight: 600;
+  font-size: 1.05em;
+  color: #3a2e25;
 }
 
 input[type="text"],
 select {
   width: 100%;
-  padding: 0.8em;
-  margin-top: 0.5em;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  padding: 0.9em;
   font-size: 1em;
+  border: 2px solid #c2aa8e;
+  border-radius: 10px;
+  background: #ffffff;
+  box-sizing: border-box;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: #b55c29;
+  outline: none;
 }
 
 button.botao {
-  background-color: #c40000;
+  width: 100%;
+  background: linear-gradient(to bottom, #dc3545, #a81e2a);
   color: white;
   border: none;
-  padding: 1em 2em;
-  border-radius: 8px;
+  padding: 1em;
+  margin-top: 1.5em;
+  border-radius: 12px;
   font-weight: bold;
-  margin-top: 2em;
   font-size: 1em;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 0 #7f1d1d;
 }
 
 button.botao:hover {
-  background-color: #a00000;
+  background: linear-gradient(to bottom, #b02a37, #871821);
+  transform: translateY(-1px);
+}
+
+progress {
+  width: 100%;
+  height: 18px;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #999;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #f0e5da;
+}
+
+progress::-webkit-progress-value {
+  background-color: #d63384;
+}
+
+#resultado {
+  background: #fffefb;
+  border-left: 6px solid #6e4f36;
+  padding: 1em 1.2em;
+  border-radius: 12px;
+  margin-top: 2em;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .hidden {
   display: none;
 }
 
-#resultado {
-  background: #f6f6f6;
-  border-left: 5px solid #444;
-  padding: 1.5em;
-  margin-top: 2em;
-  border-radius: 8px;
-  text-align: left;
-}
-
-progress {
-  width: 100%;
-  height: 20px;
-  margin-top: 1em;
-  margin-bottom: 2em;
-  appearance: none;
-}
-
-progress::-webkit-progress-bar {
-  background-color: #eee;
-  border-radius: 10px;
-}
-
-progress::-webkit-progress-value {
-  background-color: #c40000;
-  border-radius: 10px;
-}
-
 #ranking-list {
+  margin-top: 1.5em;
   list-style: none;
   padding: 0;
-  margin-top: 1.5em;
-  text-align: left;
 }
 
 #ranking-list li {
-  padding: 0.5em 0;
+  padding: 0.6em 1em;
   border-bottom: 1px dashed #ccc;
+  font-size: 0.95em;
+  background: #fffdf8;
+  border-radius: 6px;
+  margin-bottom: 0.4em;
+  transition: background 0.2s ease;
+}
+
+#ranking-list li:nth-child(1) {
+  background: #fff4e6;
+  font-weight: bold;
+}
+
+#ranking-list li:nth-child(2) {
+  background: #fdf0ff;
+}
+
+#ranking-list li:nth-child(3) {
+  background: #e9f7ff;
 }
 
 a {
+  color: #0d6efd;
   text-decoration: none;
-  color: #007acc;
+  font-weight: bold;
 }
 
 a:hover {
   text-decoration: underline;
+}
+
+.ranking h2 {
+  margin-top: 2em;
+  text-align: center;
+  color: #5a2d18;
+  font-size: 1.5em;
+  font-weight: bold;
 }
